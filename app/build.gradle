@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+//apply plugin: 'trace-point' //无埋点插件应用
 
 android {
     compileSdkVersion 28

@@ -54,20 +54,20 @@ class InterceptEventConfig{
     }
 
     static {
-        activityMethods.put('onCreate(Landroid/os/Bundle;)V',new MethodCode(
-                'onCreate',
-                '(Landroid/os/Bundle;)V',
-                'activityOnCreate',
+        activityMethods.put('onResume()V',new MethodCode(
+                'onResume',
+                '()V',
+                'activityOnResume',
                 '(Landroid/app/Activity;)V',
                 '',
                 1,
                 1,
                 [Opcodes.ALOAD]
         ))
-        activityMethods.put('onResume()V',new MethodCode(
-                'onResume',
+        activityMethods.put('onPause()V',new MethodCode(
+                'onPause',
                 '()V',
-                'activityOnResume',
+                'activityOnPause',
                 '(Landroid/app/Activity;)V',
                 '',
                 1,

@@ -1,7 +1,6 @@
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven'
 apply plugin: 'groovy'
-
 
 dependencies {
     implementation gradleApi()
@@ -11,7 +10,9 @@ dependencies {
 repositories {
     jcenter()
     google()
+    mavenCentral()
 }
+
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -104,3 +105,20 @@ bintray {
         publish = true
     }
 }
+
+//// 本地调试
+//def groupId = 'com.lywow.lugin'
+//version = '0.0.3'
+//def artifactId = 'inserter'
+//
+//// 上传本地maven库
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            snapshotRepository(url: uri('../pluginLibs'))
+//            pom.groupId = groupId
+//            pom.artifactId = artifactId
+//            pom.version = version
+//        }
+//    }
+//}

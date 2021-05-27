@@ -95,8 +95,8 @@ class HClassVisitor extends ClassVisitor{
                             mv.visitVarInsn(Opcodes.ILOAD, 1)
                             if (superName == 'android/app/Fragment'){
                                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, InterceptEventConfig.owner, methodCode.agentName, '(Landroid/app/Fragment;Z)V', false)
-                            }else {
-                                mv.visitMethodInsn(Opcodes.INVOKESTATIC, InterceptEventConfig.owner, methodCode.agentName, '(Landroid/support/v4/app/Fragment;Z)V', false)
+                            }else if(superName == 'androidx/fragment/app/Fragment'){
+                                mv.visitMethodInsn(Opcodes.INVOKESTATIC, InterceptEventConfig.owner, methodCode.agentName, '(Landroidx/fragment/app/Fragment;Z)V', false)
                             }
                         }
                     }
@@ -109,7 +109,7 @@ class HClassVisitor extends ClassVisitor{
     @Override
     void visitEnd() {
         if (instanceOfActivity(superName)){
-            //防止activity没有复写oncreate方法，再次检测添加
+            //防止activity没有复写onResume方法，再次检测添加
             Iterator iterator = InterceptEventConfig.activityMethods.keySet().iterator()
             while (iterator.hasNext()) {
                 String key = iterator.next()
@@ -118,15 +118,11 @@ class HClassVisitor extends ClassVisitor{
                     continue
                 }
                 //添加需要的生命周期方法
-                if (key == 'onCreate(Landroid/os/Bundle;)V' || key == 'onResume()V'){
+                if (key == 'onPause()V' || key == 'onResume()V'){
                     MethodVisitor methodVisitor = classVisitor.visitMethod(Opcodes.ACC_PUBLIC, methodCell.name, methodCell.desc, null, null)
                     methodVisitor.visitCode()
                     methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-
                     methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-                    if (key == 'onCreate(Landroid/os/Bundle;)V') {
-                        methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
-                    }
                     methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, superName, methodCell.name, methodCell.desc, false)
                     methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, InterceptEventConfig.owner, methodCell.agentName, methodCell.agentDesc, false)
                     methodVisitor.visitInsn(Opcodes.RETURN)
@@ -151,10 +147,10 @@ class HClassVisitor extends ClassVisitor{
                 methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, superName, methodCell.name, methodCell.desc, false)
                 methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
                 methodVisitor.visitVarInsn(Opcodes.ILOAD, 1)
-                if (superName == 'android/app/Fragment'){
+                if (superName == "android/app/Fragment"){
                     methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, InterceptEventConfig.owner, methodCell.agentName, '(Landroid/app/Fragment;Z)V', false)
-                }else {
-                    methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, InterceptEventConfig.owner, methodCell.agentName, '(Landroid/support/v4/app/Fragment;Z)V', false)
+                }else if(superName == 'androidx/fragment/app/Fragment'){
+                    methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, InterceptEventConfig.owner, methodCell.agentName, '(Landroidx/fragment/app/Fragment;Z)V', false)
                 }
                 methodVisitor.visitInsn(Opcodes.RETURN)
                 methodVisitor.visitMaxs(2, 2)
@@ -169,11 +165,13 @@ class HClassVisitor extends ClassVisitor{
      * @param superName
      */
     private static boolean instanceOfFragemnt(String superName){
-        return superName == "android/app/Fragment" || superName == "android/support/v4/app/Fragment"
+        return superName == "android/app/Fragment" ||
+                superName == "androidx/fragment/app/Fragment"
     }
 
     private static boolean instanceOfActivity(String superName){
-        return superName == 'android/support/v7/app/AppCompatActivity' || superName == 'android/app/Activity'
+        return superName == "android/app/Activity" ||
+                superName == "androidx/appcompat/app/AppCompatActivity"
     }
 
 }
